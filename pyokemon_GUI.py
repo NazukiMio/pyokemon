@@ -11,6 +11,8 @@ from PIL import Image, ImageTk
 from io import BytesIO
 # Transformar datos binarios en datos de texto, en ese caso, para convertir imagenes, 
 # es que requests devuelve imagenes en formato binario, y tkinter no puede manejar eso.
+import webbrowser
+# Llamar a modulo webbrowser, para abrir enlaces en el navegador
 
 class InfoPokemon:
 # Crear un clase llamada InfoPokemon, que contiene todas las funciones que se usaran en la app
@@ -24,6 +26,37 @@ class InfoPokemon:
         # Define el tamaño de la app
         # self.root.resizable(False, False)
         # Si no quieres que la app se pueda redimensionar, puedes descomentar esta linea
+
+        self.logo_frame = ttk.Frame(root)
+        # Crear un contenedor para el logo, es parecido a un div en html
+        self.logo_frame.pack(pady=20, padx=20)
+        # Su ubicacion
+
+        self.logo_url = "https://pngimg.com/uploads/pokemon_logo/pokemon_logo_PNG5.png"
+        # URL de la imagen del logo, es parecido a un src en html
+        self.logo_image = Image.open(BytesIO(requests.get(self.logo_url).content))
+        # Consigue la imagen del logo y convertirla de binario a texto
+        self.logo_photo = ImageTk.PhotoImage(self.logo_image)
+        # Convertir la imagen en un objeto que tkinter puede manejar
+
+        # Configurar el logo
+        width = 200
+        aspect_ratio = self.logo_image.height / self.logo_image.width
+        # Define el ancho de la imagen, y el aspect ratio, es el ratio de alto a ancho de la imagen
+        height = int(width * aspect_ratio)
+        # Define el alto de la imagen, es el ancho multiplicado por el aspect ratio
+        self.logo_image = self.logo_image.resize((width, height))
+        # Redimensiona la imagen, es el objeto imagen, y el tamaño que se quiere
+        self.logo_photo = ImageTk.PhotoImage(self.logo_image)
+        # Convertir la imagen en un objeto que tkinter puede manejar
+        
+        self.logo_label = ttk.Label(self.logo_frame, image=self.logo_photo)
+        # Mostrar la imagen del logo en la app
+        self.logo_label.pack()
+        # Su ubicacion
+
+        self.logo_label.bind("<Button-1>", self.open_pokemon_website)
+        # Funcion para abrir la pagina web de pokemon cuando se haga click en el logo
 
         # PARTE DE LA BUSQUEDA
         self.search_frame = ttk.Frame(root)
@@ -59,6 +92,11 @@ class InfoPokemon:
         # de left, para que el texto se alinee a la izquierda, 
         # parecerse a "max-width" o "white-space" y "text-align: left;" en css
         self.info_label.pack(pady=10)
+
+    #Funcion para abrir la pagina web de pokemon
+    def open_pokemon_website(self, event):
+        webbrowser.open("https://www.pokemon.com/es")
+        # Abre la pagina web de pokemon en el navegador predeterminado del sistema
 
     # Definir la funcion de buscar el pokemon
     def search_pokemon(self):
